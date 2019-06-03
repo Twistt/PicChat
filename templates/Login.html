@@ -1,0 +1,26 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style type="text/css">
+        body {background-color:black; background-image:url('dark-carbon-fiber.jpg'); background-repeat:repeat-x; background-size:cover;  }
+        h1 {color:cyan;}
+        #LoginBox {text-align:center; width:40%; margin-top:15%; margin-left:30%; background-color:black; padding:20px; border-radius:7px;}
+    </style>
+</head>
+<body>
+    <div id="LoginBox">
+        <h1><img src="images/bubble.png" width="100" style="align-content:center;"/>PictoChat</h1>
+        <form method="post" action="/" class="form-group">
+            <div id="Results">{loginresults}</div>
+            <input name="username" id="InputBar" class="form-control" placeholder="Username"/><br />
+            <input name="password" id="InputBar" class="form-control" placeholder="Password"/><br />
+            <input type="hidden" name="action" value="login" />
+            <button type="submit" class="form-control">Login</button>
+        </form>
+    </div>
+</body>
+</html>

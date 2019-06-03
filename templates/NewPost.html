@@ -1,0 +1,32 @@
+﻿<div id='UploadContainer' style='width:200px;'>
+    <div class='picHeader' style='text-align:center;'>
+        <b>Share and Upload a new Image!</b>
+    </div>
+    <form method='post' action='/' target='postep' class='form-inline' style='padding:10px;'>
+        Image Link:
+        <!--<input type='file' value='Upload' />-->
+        <input type="text" name="url" placeholder="https://*.onion" />
+        Message:
+        <input name='message' id='InputBar' class='form-control' maxlength='200' />
+        <input type='hidden' value='{uid}' name='uid' class='form-control' />
+        <input type='hidden' value='post' name='action' class='form-control' />
+
+        Tag it:<br />
+        <table>
+            <tr>
+                <td><input type='checkbox' /> option 1</td>
+                <td><input type='checkbox' /> option 1</td>
+            </tr>
+            <tr>
+                <td><input type='checkbox' /> option 1</td>
+                <td><input type='checkbox' /> option 1</td>
+            </tr>
+        </table>
+        <br />
+        Other Tags:
+        <input name='othertags' id='InputBar' class='form-control' /><br /><br />
+        Post it: <button type='submit' class='form-control'>Upload and Share</button>
+    </form>
+    {uid}
+    <iframe src='' name='postep' style='width:1px; height:1px;'></iframe>
+</div>

@@ -1,13 +1,19 @@
 ﻿<html>
 <head>
     <style type="text/css">
-        body {background-color:black; color:cyan; border:2px solid blue; font-size:11pt;}
-        #Messagebar {Position:absolute; bottom:0px; left:5%; width:90%; height:35px; background-color:#666666; border:1px solid magenta; font-size:11pt; left:10%; bottom:10px;}
-
+        body {padding:0px; margin:0px; overflow:hidden; background-color:black; border:1px solid cyan; font-family:Verdana; color:cyan; font-size:9pt;}
+        table {color:cyan; font-size:9pt;}
+        #MainWindow {margin:1px; height:99.5%; border:1px solid cyan; overflow:hidden; overflow-y:auto; display: flex; align-items: center; justify-content: center; flex-direction: row-reverse; flex-wrap: wrap;  flex-flow: row wrap;  align-content: flex-start;}
+        .picContainer, #UploadContainer { width:150px; min-height:200px; border-radius:6px; border:1px solid magenta; margin:10px; overflow:hidden; background-size:contain; background-position:center; background-repeat:no-repeat; position:relative; }
+        .picHeader {width:100%; background-color:#111; font-size:9pt; color:magenta; padding:3px;}
+        .messageText {position:absolute; bottom:0px; font-size:8pt; color:cyan; height:auto; width:100%; background-color:#111;}
+        .showButton {align-content:center; text-align:center;}
+        .defaulthidden {display:none;}
     </style>
 
 </head>
 <body>
-    <div id="Messagebar"><form method="post" action="/" target="postep"><input name="message"/><input type="hidden" value="thisisapretendhash" name="uid" /><input type="submit"/></form><iframe src="" name="postep" style="width:1px; height:1px;"></iframe></div>
-    <div id="MainWindow">
-        Messages to follow....
+    <div class="defaulthidden largePicView">
+
+    </div>
+    <div id="MainWindow" class="container">
