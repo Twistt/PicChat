@@ -11,8 +11,7 @@ namespace PicChat
     {
         public Stream OutputStream;
         public HttpListenerResponse response;
-        public string UID = string.Empty;
-
+        public User User = null;
         // Wrap the event in a protected virtual method
         // to enable derived classes to raise the event.
         //protected virtual void RaiseSampleEvent()
@@ -21,21 +20,21 @@ namespace PicChat
         //    if (HttpServer.MessageReceived != null)
         //        HttpServer.MessageReceived(this, new MessageEventArgs("Hello"));
         //}
-        public ClientConnection(HttpListenerContext context, string uid) {
+        public ClientConnection(HttpListenerContext context, User user) {
             HttpListenerRequest request = context.Request;
             response = context.Response;
             OutputStream = response.OutputStream;
             //UID = Common.GenerateNeatHash(DateTime.Now.Millisecond.ToString() + "USERNAME");
-            UID = uid;
+            User = user;
             Common.server.MessageReceived += (o,e) =>
             {
                 SendData(e.Text);
             };
             SendData(File.ReadAllText("templates/Main.html"));
-            SendData(File.ReadAllText("templates/NewPost.html").Replace("{uid}",UID));
+            SendData(File.ReadAllText("templates/NewPost.html").Replace("{uid}", User.UID));
             foreach (var post in Common.data.Posts)
             {
-                SendData(File.ReadAllText("templates/Post.html").Replace("{uid}", UID).Replace("{username}", "WhoaGuy").Replace("{pid}", post.PostID).Replace("{message}", post.Message));
+                SendData(File.ReadAllText("templates/Post.html").Replace("{uid}", User.UID).Replace("{username}", user.UserName).Replace("{pid}", post.PostID).Replace("{message}", post.Message));
             }
         }
         public bool SendData(string data) {

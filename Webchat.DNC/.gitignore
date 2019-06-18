@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/ParaChat.DNC
+/DBBrowser/bin/Debug
+/DBBrowser/obj/Debug
+/packages
+/ParaChat.DNC/bin
+/ParaChat.DNC/developmentParaDNC
+/ParaChat.DNC/obj
+/SQLiteDAL

@@ -6,6 +6,7 @@ namespace PicChat
 {
     public class User
     {
+        public string UID { get; set; }
         public string UserName { get; set; }
         public string PasswordHash { get; set; }
         public DateTime Joined { get; set; }

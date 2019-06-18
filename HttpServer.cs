@@ -60,7 +60,7 @@ namespace PicChat
                     {
                         UID = cookie.Value;
                     }
-                    if (UID != null)
+                    if (UID != null && UID != string.Empty)
                     {
                         Console.WriteLine("Found the cookie!");
                     }
@@ -87,16 +87,23 @@ namespace PicChat
                         }
                         else
                         {
-                            ClientConnection conn = null;
-
-                            conn = Connections.Where(c => c.UID == UID).FirstOrDefault();
-                            if (conn == null) Connections.Add(new ClientConnection(context, UID));
-                            else
+                            if (UID != null && UID != string.Empty)
                             {
-                                //Take over previous connection with this connection information with cookie.
-                                conn.response = context.Response;
-                                conn.OutputStream = context.Response.OutputStream;
+                                ClientConnection conn = null;
+
+                                conn = Connections.Where(c => c.User.UID == UID).FirstOrDefault();
+                                if (conn != null)
+                                {
+                                    //Take over previous connection with this connection information with cookie.
+                                    conn.response = context.Response;
+                                    conn.OutputStream = context.Response.OutputStream;
+                                }
+                                else
+                                {
+                                    Common.WriteFileData("templates/Login.html", context, new Dictionary<string, string> { { "{loginresults}", "" } });
+                                }
                             }
+
                         }
                     }
 
@@ -120,41 +127,58 @@ namespace PicChat
             var body = new StreamReader(context.Request.InputStream).ReadToEnd();
             var parts = body.Split("&");
             var action = "";
-
+            var userConn = Connections.Where(u => u.User.UID == UID).FirstOrDefault();
 
             var oaction = parts.Where(p => p.StartsWith("action")).FirstOrDefault();
             if (oaction != null) action = oaction.Split("=")[1];
             if (action == "login")
             {
+
                 var login = parts.Where(p => p.StartsWith("username")).FirstOrDefault();
                 if (login == null || login.EndsWith("="))
                 {
                     Common.WriteFileData("templates/Login.html", context, new Dictionary<string, string> { { "{loginresults}", "" } });
                     return;
                 }
+
+                var cc = new ClientConnection(context, new User { Joined=DateTime.UtcNow, UID=UID, UserName= login.Split("=")[1] });
                 //ToDo: login script.
-                Connections.Add(new ClientConnection(context, UID));
+                Connections.Add(cc);
                 return;
             }
-            
-            Console.WriteLine(body);
-            if (parts.Where(p => p.StartsWith("showImage")).FirstOrDefault() != null)
+
+            if (action == "showlarge")
+            {
+
+                    var pid = System.Web.HttpUtility.UrlDecode(parts.Where(p => p.StartsWith("pid")).FirstOrDefault().Split("=")[1]);
+                    var post = Common.data.Posts.Where(p => p.PostID == pid).FirstOrDefault();
+
+                    if (post != null)
+                    {
+                        var conn = Connections.Where(c => c.User.UID == (UID)).FirstOrDefault();
+                        if (conn != null) conn.SendData(@"<style type='text/css'>.largePicView {background-image:url('" + System.Web.HttpUtility.UrlDecode(post.URL) + "'); display:block; position:absolute; top:10%; left:10%;}</style>");
+                    }
+
+            }
+            if (action == "showimage")
             {
                 var pid = System.Web.HttpUtility.UrlDecode(parts.Where(p => p.StartsWith("pid")).FirstOrDefault().Split("=")[1]);
                 var post = Common.data.Posts.Where(p => p.PostID == pid).FirstOrDefault();
+
                 if (post != null)
                 {
-                    var conn = Connections.Where(c => c.UID == (UID)).FirstOrDefault();
+                    var conn = Connections.Where(c => c.User.UID == (UID)).FirstOrDefault();
                     if (conn != null) conn.SendData(@"<style type='text/css'>." + pid + "_picContainer {background-image:url('" + System.Web.HttpUtility.UrlDecode(post.URL) + "')} ." + pid + "_volatile {display:none;} ." + pid + "_largebutton {display:inline;}</style>");
                 }
             }
-            else
+            if(action == "post")
             {
                 var message = parts.Where(p => p.StartsWith("message")).FirstOrDefault().Split("=")[1];
                 var url = parts.Where(p => p.StartsWith("url")).FirstOrDefault().Split("=")[1];
                 context.Response.Close();
                 Post post = new Post() { Message = message, UID = UID, TimeStamp = DateTime.UtcNow, URL = url };
-                Common.server.MessageClients(File.ReadAllText("templates/Post.html").Replace("{uid}", UID).Replace("{username}", "WhoaGuy").Replace("{pid}", post.PostID).Replace("{message}", post.Message));
+                var contents = File.ReadAllText("templates/Post.html").Replace("{uid}", UID).Replace("{username}", userConn.User.UserName).Replace("{pid}", post.PostID).Replace("{message}", post.Message);
+                Common.server.MessageClients(contents);
                 Common.data.Posts.Add(post);
             }
             //Console.WriteLine($"{}");
