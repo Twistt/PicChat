@@ -42,6 +42,21 @@ namespace ParaChat.DNC
             {
                 HttpListenerContext context = listener.GetContext();
                 context.Response.ContentType = "text/html";
+
+                if (context.Request.RawUrl.EndsWith(".jpg") || context.Request.RawUrl.EndsWith(".png"))
+                {
+                    var buffer = File.ReadAllBytes("images/" + context.Request.RawUrl.Split("/").LastOrDefault());
+                    context.Response.ContentLength64 = buffer.Length;
+                    context.Response.OutputStream.Write(buffer);
+                    context.Response.Close();
+                    continue;
+                }
+                if (context.Request.RawUrl.EndsWith(".ico"))
+                {
+                    context.Response.Close();
+                    continue;
+                }
+
                 if (context.Request.HttpMethod != "POST")
                 {
                     if (IsBanned(null, context))
@@ -131,7 +146,7 @@ namespace ParaChat.DNC
         public static bool IsBanned(Dictionary<string, string> data, HttpListenerContext context) {
             if (data == null)
             {
-                var res = context.Request.Cookies["paranoia_ban"];
+                var res = context.Request.Cookies["Pictochat_ban"];
                 if (res != null) return true;
             }
             if (data == null) return false;
@@ -141,7 +156,7 @@ namespace ParaChat.DNC
             {
                 try
                 {
-                    context.Response.SetCookie(new Cookie("paranoia_ban", "true"));
+                    context.Response.SetCookie(new Cookie("Pictochat_ban", "true"));
                 }
                 catch (Exception er) { }
                 return true;

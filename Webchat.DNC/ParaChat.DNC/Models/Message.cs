@@ -29,7 +29,7 @@ namespace ParaChat.DNC
                     var messagePrefix = "";
                     if (UserName == "System") classes += " systemMessage";
                     else classes += " message";
-                    if (UserName == "Paranoia") classes += " paranoiaPink";
+                    if (UserName == "Pictochat") classes += " PictochatPink";
                     if (UserName == "Library") classes += " libraryBlue";
 
                     if (isPrivate)
