@@ -60,9 +60,9 @@ namespace PicChat
                     }
                     if (UID != null && UID != string.Empty)
                     {
-                        Console.WriteLine("Found the cookie!");
+                        Console.WriteLine(UID);
                     }
-                    if (UID == null || UID == string.Empty)
+                    if (context.Request.HttpMethod == "GET")
                     {
                         UID = Common.GenerateNeatHash(DateTime.UtcNow.ToString() + DateTime.UtcNow.Millisecond.ToString());
                         Cookie cook = new Cookie("UID", UID);
@@ -83,33 +83,35 @@ namespace PicChat
                         }
                         ProcessRequest(context, UID);
                     }
-                    else
-                    {
-                        if (context.Request.RawUrl.EndsWith("login"))
-                        {
-                            Common.WriteFileData("templates/Login.html", context, new Dictionary<string, string> { { "{loginresults}", "" } });
-                        }
-                        else
-                        {
-                            if (UID != null && UID != string.Empty)
-                            {
-                                ClientConnection conn = null;
-
-                                conn = Connections.Where(c => c.User.UID == UID).FirstOrDefault();
-                                if (conn != null)
-                                {
-                                    //Take over previous connection with this connection information with cookie.
-                                    conn.response = context.Response;
-                                    conn.OutputStream = context.Response.OutputStream;
-                                }
-                                else
-                                {
-                                    Common.WriteFileData("templates/Login.html", context, new Dictionary<string, string> { { "{loginresults}", "" } });
-                                }
-                            }
-                        }
-                    }
+                    //else
+                    //{
+                    //    if (context.Request.RawUrl.EndsWith("login"))
+                    //    {
+                    //        Common.WriteFileData("templates/Login.html", context, new Dictionary<string, string> { { "{loginresults}", "" } });
+                    //    }
+                    //    else
+                    //    {
+                    //        if (UID != null && UID != string.Empty)
+                    //        {
+                    //            ClientConnection conn = null;
+                    //            var user = Common.data.Users.Where(u => u.UID == UID).FirstOrDefault();
+                    //            if (user == null)
+                    //            {
+                    //                Common.WriteFileData("templates/Login.html", context, new Dictionary<string, string> { { "{loginresults}", "" } });
+                    //                context.Response.Close();
+                    //                return;
+                    //            }
+                    //            else
+                    //            {
+                    //                conn = Connections.Where(c => c.User.UID == UID).FirstOrDefault();
+                    //                Connections.Remove(conn);
+                    //                Connections.Add(new ClientConnection(context, user));
+                    //            }
+                    //        }
+                    //    }
+                    //}
                 }
+                Console.WriteLine("Listener Stopped! Crap.");
                 listener.Stop();
                 listener.Close();
             });
@@ -147,7 +149,7 @@ namespace PicChat
                 var existingUser = Common.data.Users.Where(u => u.UserName == login).FirstOrDefault();
                 if (existingUser != null && existingUser.PasswordHash == pass)
                 {
-                    var cc = new ClientConnection(context, new User { Joined = DateTime.UtcNow, UID = UID, UserName = login });
+                    var cc = new ClientConnection(context, new User { Joined = DateTime.UtcNow, UID = UID, UserName = login, PasswordHash=pass });
                     Connections.Add(cc);
                     return;
                 }
@@ -155,8 +157,12 @@ namespace PicChat
                 {
                     if (CreateAccount(postData, context))
                     {
-                        var cc = new ClientConnection(context, new User { Joined = DateTime.UtcNow, UID = UID, UserName = login });
+                        var newuser = new User { Joined = DateTime.UtcNow, UID = UID, UserName = login, PasswordHash=pass };
+
+                        var cc = new ClientConnection(context, newuser);
                         Connections.Add(cc);
+                        Common.data.Users.Add(newuser);
+                        Common.SaveData();
                         return;
 
                     }
@@ -171,19 +177,19 @@ namespace PicChat
                 return;
             }
 
-            if (action == "showlarge")
-            {
+            //if (action == "showlarge")
+            //{
 
-                var pid = postData.GetValueOrDefault("pid");
-                var post = Common.data.Posts.Where(p => p.PostID == pid).FirstOrDefault();
+            //    var pid = postData.GetValueOrDefault("pid");
+            //    var post = Common.data.Posts.Where(p => p.PostID == pid).FirstOrDefault();
 
-                if (post != null)
-                {
-                    var conn = Connections.Where(c => c.User.UID == (UID)).FirstOrDefault();
-                    if (conn != null) conn.SendData(@"<style type='text/css'>.largePicView {display:inline; background-image:url('" + System.Web.HttpUtility.UrlDecode(post.URL) + "'); }</style>");
-                }
+            //    if (post != null)
+            //    {
+            //        var conn = Connections.Where(c => c.User.UID == (UID)).FirstOrDefault();
+            //        if (conn != null) conn.SendData(@"<style type='text/css'>.largePicView {display:inline; background-image:url('" + System.Web.HttpUtility.UrlDecode(post.URL) + "'); }</style>");
+            //    }
 
-            }
+            //}
 
             if (action == "hidelarge")
             {
@@ -204,8 +210,14 @@ namespace PicChat
 
             if(action == "post")
             {
+                
                 var message = postData.GetValueOrDefault("message");
                 var url = postData.GetValueOrDefault("url");
+                var repeat = Common.data.Posts.Where(p => p.URL == url).FirstOrDefault();
+                if (repeat != null)
+                {
+                    message = "[Repost]" + message;
+                }
                 context.Response.Close();
                 Post post = new Post() { Message = message, UID = UID, TimeStamp = DateTime.UtcNow, URL = url };
                 var contents = File.ReadAllText("templates/Post.html").Replace("{uid}", UID).Replace("{url}", url).Replace("{username}", userConn.User.UserName).Replace("{pid}", post.PostID).Replace("{message}", post.Message);

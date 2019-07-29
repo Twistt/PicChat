@@ -9,18 +9,25 @@
         body {background-color:black; background-image:url('dark-carbon-fiber.jpg'); background-repeat:repeat-x; background-size:cover;  }
         h1 {color:cyan;}
         #LoginBox {text-align:center; width:40%; margin-top:15%; margin-left:30%; background-color:black; padding:20px; border-radius:7px;}
+        #Results {color:white; font-weight:bold; padding:7px;}
     </style>
 </head>
 <body>
     <div id="LoginBox">
-        <h1><img src="images/bubble.png" width="100" style="align-content:center;"/>PictoChat</h1>
+        <h1><img src="images/bubble.png" width="100" style="align-content:center;" />PictoChat</h1>
         <form method="post" action="/" class="form-group">
             <div id="Results">{loginresults}</div>
-            <input name="username" id="InputBar" class="form-control" placeholder="Username"/><br />
-            <input name="password" id="InputBar" class="form-control" placeholder="Password"/><br />
+            <input name="username" id="InputBar" class="form-control" placeholder="Username" /><br />
+            <input name="password" id="InputBar" class="form-control" placeholder="Password" /><br />
             <input type="hidden" name="action" value="login" />
             <button type="submit" class="form-control">Login</button>
         </form>
+        <h4>Why is pictochat better than the horrible chat template that everone else uses?</h4>
+        <ul>
+            <li>This page does not hard refresh to update itself (losing your scrollspot sucks).</li>
+            <li>You get new posts in REAL time.</li>
+            <li>There is no Javascript on this site. </li>
+        </ul>
     </div>
 </body>
 </html>

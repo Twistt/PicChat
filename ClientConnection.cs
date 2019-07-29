@@ -34,7 +34,7 @@ namespace PicChat
             SendData(File.ReadAllText("templates/NewPost.html").Replace("{uid}", User.UID));
             foreach (var post in Common.data.Posts)
             {
-                SendData(File.ReadAllText("templates/Post.html").Replace("{uid}", User.UID).Replace("{username}", user.UserName).Replace("{pid}", post.PostID).Replace("{message}", post.Message));
+                SendData(File.ReadAllText("templates/Post.html").Replace("{uid}", User.UID).Replace("{url}", post.URL).Replace("{username}", user.UserName).Replace("{pid}", post.PostID).Replace("{message}", post.Message));
             }
         }
         public bool SendData(string data) {
