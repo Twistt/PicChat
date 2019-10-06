@@ -1,11 +1,5 @@
 ﻿using ArachnidCreations.SqliteDAL;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using ParaChat.DNC.Models;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net;
 namespace ParaChat.DNC
 {
     class Program

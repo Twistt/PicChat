@@ -15,7 +15,7 @@ namespace ParaChat.DNC
         }
         public ChatMessage(string Text) {
             Message = Text;
-            DATETIME = DateTime.Now;
+            DATETIME = DateTime.UtcNow;
         }
         public int ID { get; set; }
         public string UserName { get; set; }

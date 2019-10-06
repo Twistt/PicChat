@@ -2,167 +2,53 @@
 <head>
     <title>Pictochat Chat (ParaChat)</title>
     <style>
-        body {
-            background-color: black;
-            font-family: verdana;
-            color: white;
-            font-size: 9pt;
-        }
+        body { background-color: black; font-family: verdana; color: white; font-size: 9pt; }
 
-        h4 {
-            font-size: 10pt;
-        }
+        h4 { font-size: 10pt; }
 
-        .window {
-            border: 1px solid cyan;
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
+        .window { border: 1px solid cyan; display: block; width: 100%; height: 100%; }
 
-        .windowHeader {
-            background-color: purple;
-            display: block;
-            height: 30px;
-            color: white;
-        }
+        .windowHeader { background-color: purple; display: block; height: 20px; color: white; }
 
-            .windowHeader h4 {
-                padding: 0px;
-                margin: 0px;
-                padding: 5px;
-            }
+            .windowHeader h4 { padding: 0px; margin: 0px; padding: 2px; }
 
-        .mainBody {
-            padding: 5px;
-        }
+        .mainBody { padding: 5px; }
 
-        #ChatWindow {
-            width: 87%;
-            min-height: 79%;
-            position: absolute;
-            top: 1%;
-            left: 1%;
-        }
+        #ChatWindow { width: 87%; min-height: 79%; position: absolute; bottom: 1%; left: 1%; }
 
-            #ChatWindow .mainBody {
-                display: flex;
-                flex-direction: column-reverse;
-            }
+            #ChatWindow .mainBody { display: flex; flex-direction: column-reverse; }
 
-        #StatsWindow {
-            width: 10%;
-            position: fixed;
-            right: 1%;
-            top: 1%;
-            height: 15%;
-        }
+        #StatsWindow { width: 10%; position: fixed; right: 1%; top: 1%; height: 15%; }
 
-        #UserWindow {
-            width: 10%;
-            position: fixed;
-            right: 1%;
-            top: 35%;
-            height: 64%;
-        }
+        #UserWindow { width: 10%; position: fixed; right: 1%; top: 35%; height: 64%; }
 
-        #ToolsWindow {
-            width: 10%;
-            position: fixed;
-            right: 1%;
-            top: 18%;
-            height: 15%;
-        }
+        #ToolsWindow { width: 10%; position: fixed; right: 1%; top: 18%; height: 15%; }
 
-        #ChatBar {
-            width: 87%;
-            height: 17%;
-            position: fixed;
-            bottom: 5px;
-            left: 1%;
-            z-index: 99;
-            background-color: black;
-        }
+        #ChatBar { width: 87%; height: 8%; position: fixed; top: 5px; left: 1%; z-index: 99; background-color: black; overflow: hidden; }
 
-        #ChatBarFrame {
-            width: 100%;
-            height: 100%;
-            border: 0px;
-            margin: 0px;
-            background-color: black;
-            z-index: 99;
-        }
+        #ChatBarFrame { width: 100%; height: 100%; border: 0px; margin: 0px; background-color: black; z-index: 99; }
 
-        #UserList {
-            color: white;
-            white-space: pre-wrap;
-        }
+        #UserList { color: white; white-space: pre-wrap; }
 
-        #UserWindow .mainBody {
-            color: white;
-            overflow-y: auto;
-            height: 100%;
-        }
+        #UserWindow .mainBody { color: white; overflow-y: auto; height: 100%; }
 
-            #UserWindow .mainBody form {
-                float: left;
-                padding: 5px;
-            }
+            #UserWindow .mainBody form { float: left; padding: 5px; }
 
-        .wrapperWindow {
-            height: 90%;
-        }
+        .wrapperWindow { height: 90%; }
 
-        .message {
-            width: 99.7%;
-            text-align: left;
-            border-bottom: 1px solid #333333;
-            background-color: black;
-            margin-top: 1px;
-            padding: 0px;
-            margin-right: 3px;
-            color: white;
-        }
+        .message { width: 99.7%; text-align: left; border-bottom: 1px solid #333333; background-color: black; margin-top: 1px; padding: 0px; margin-right: 3px; color: white; }
 
-        .systemMessage {
-            width: 94%;
-            text-align: left;
-            border: 1px solid #333333;
-            border-radius: 7px;
-            border-color: purple;
-            background-color: #111111;
-            margin-top: 3px;
-            padding: 2px;
-            margin-left: 2.5%;
-        }
+        .systemMessage { width: 94%; text-align: left; border: 1px solid #333333; border-radius: 7px; border-color: purple; background-color: #111111; margin-top: 3px; padding: 2px; margin-left: 2.5%; }
 
-        .linklist a {
-            color: cyan;
-        }
+        .linklist a { color: cyan; }
 
-        .PictochatPink {
-            color: pink;
-        }
+        .PictochatPink { color: pink; }
 
-        .libraryBlue {
-            width: 94%;
-            text-align: left;
-            border: 1px solid lightblue;
-            border-radius: 7px;
-            border-color: lightblue;
-            background-color: #111111;
-            margin-top: 3px;
-            padding: 2px;
-            margin-left: 2.5%;
-        }
-        .privateMessage {
-            color:gold;
-            font-weight:bold;
-        }
+        .libraryBlue { width: 94%; text-align: left; border: 1px solid lightblue; border-radius: 7px; border-color: lightblue; background-color: #111111; margin-top: 3px; padding: 2px; margin-left: 2.5%; }
 
-        #ChatWindow .mainBody {
-            padding: 0px;
-        }
+        .privateMessage { color: gold; font-weight: bold; }
+
+        #ChatWindow .mainBody { padding: 0px; }
     </style>
 </head>
 <body>
@@ -201,9 +87,6 @@
                 <div>/block user</div>
                 <h4>Library Commands</h4>
                 <div>/search toys</div>
-                <div>/library toys</div>
-                <h4>Curator Commands</h4>
-                <div>You are not a curator and can't use these commands.</div>
             </div>
         </div>
     </div>

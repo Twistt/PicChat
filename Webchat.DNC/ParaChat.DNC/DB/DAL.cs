@@ -13,84 +13,78 @@ namespace ArachnidCreations.SqliteDAL
      * WARNING
      * THIS IS A MODIFIED DAL EVERYTHING IS STATIC AND SHOULD NOT BE USED FOR PRODUCTION OR WEB ENVIRONMENTS
     */
-    public class DAL
+    public static class DAL
     {
         private static SqliteConnection dbConn;
-        public  static string DBFile;
+        public static string DBFile;
         public static List<String> Log = new List<string>();
+
         public static void Exec(string txtQuery, string FileName = null)
         {
-            //try
-            //{
-                if (FileName == null) SetSL3Connection();
-                else SetSL3Connection(FileName);
-                dbConn.Open();
-                SqliteCommand sqlCommand = new SqliteCommand();
-                sqlCommand = dbConn.CreateCommand();
-                sqlCommand.CommandText = txtQuery;
-                sqlCommand.ExecuteNonQuery();
-                dbConn.Close();
-           // }
-           //catch (Exception e) {
-                
-           // }
-        }
-        private static void SetSL3Connection(string curFile = null)
-        {
-            if (curFile != null)
-            {
-                if (!File.Exists(curFile))
-                {
-                    dbConn = new SqliteConnection(@"Data Source=" + curFile + ";Version=3;New=True;Compress=True;");
-                }
-                else { dbConn = new SqliteConnection(@"Data Source=" + curFile + ";Version=3;New=False;Compress=True;"); }
-            }
-            else
-            {
-                if (File.Exists(DBFile))
-                {
 
-                    dbConn = new SqliteConnection("" +
-                        new SqliteConnectionStringBuilder
-                        {
-                            DataSource = DBFile
-                        });
-                } else
+            using (var connection = new SqliteConnection("" +
+            new SqliteConnectionStringBuilder
+            {
+                DataSource = DBFile
+            }))
+            {
+                connection.Open();
+
+                using (var transaction = connection.BeginTransaction())
                 {
-                    dbConn = new SqliteConnection(@"Data Source=" + DBFile + ";Version=3;New=True;Compress=True;");
+                    var insertCommand = connection.CreateCommand();
+                    insertCommand.Transaction = transaction;
+                    insertCommand.CommandText = txtQuery;
+                    //insertCommand.Parameters.AddWithValue("$text", "Hello, World!");
+                    insertCommand.ExecuteNonQuery();
                 }
             }
+            // }
+            //catch (Exception e) {
+
+            // }
         }
+
         public static DataTable Load(string Commandtext, string FileName = null)
         {
             DataSet DS = new DataSet();
             DataTable DT = new DataTable();
             //try
             //{
-                SetSL3Connection();
-                
-                dbConn.Open();
-            SqliteCommand sqlCommand = new SqliteCommand();
-            sqlCommand = dbConn.CreateCommand();
-            sqlCommand.CommandText = Commandtext;
-
-            using (IDataReader reader = sqlCommand.ExecuteReader())
-            {
-                DataTable dt = new DataTable();
-                using (DataSet ds = new DataSet() { EnforceConstraints = false })
+            using (var connection = new SqliteConnection("" +
+                new SqliteConnectionStringBuilder
                 {
-                    ds.Tables.Add(dt);
-                    dt.Load(reader, LoadOption.OverwriteChanges);
-                    ds.Tables.Remove(dt);
-                }
-                return dt;
-            }
+                    DataSource = DBFile
+                }))
+            {
+                connection.Open();
+                using (var transaction = connection.BeginTransaction())
+                {
+                    var selectCommand = connection.CreateCommand();
+                    selectCommand.Transaction = transaction;
+                    selectCommand.CommandText = Commandtext;
 
-            //}
-            //catch (Exception e) { 
-            //    //System.Windows.Forms.MessageBox.Show(e.ToString() + "\r\n " + Commandtext); 
-            //    return null; 
-            //}
+                    using (IDataReader reader = selectCommand.ExecuteReader())
+                    {
+                        DataTable dt = new DataTable();
+                        using (DataSet ds = new DataSet() { EnforceConstraints = false })
+                        {
+                            ds.Tables.Add(dt);
+                            dt.Load(reader, LoadOption.OverwriteChanges);
+                            ds.Tables.Remove(dt);
+                            DT = dt;
+                        }
+
+                    }
+                    transaction.Commit();
+                }
+                return DT;
+                //}
+                //catch (Exception e) { 
+                //    //System.Windows.Forms.MessageBox.Show(e.ToString() + "\r\n " + Commandtext); 
+                //    return null; 
+                //}
+            }
         }
         public static string generateCreateSQL<T>()
         {
@@ -158,14 +152,15 @@ namespace ArachnidCreations.SqliteDAL
                 else if (prop.PropertyType.ToString() == "System.Drawing.Image")//float
                 {
                     string sqlvartype = "[varchar] (250)";
-                    returnSQL += (string.Format("[{1}{2}] {3}{0}", comma, "",prop.Name, sqlvartype));
+                    returnSQL += (string.Format("[{1}{2}] {3}{0}", comma, "", prop.Name, sqlvartype));
                 }
                 //listBox1.Items.Add(prop);
 
             }
             //hacky dumb filter for the last comma if present
-            var temp = returnSQL.Substring(returnSQL.Length-3, 1);
-            if (temp == ","){
+            var temp = returnSQL.Substring(returnSQL.Length - 3, 1);
+            if (temp == ",")
+            {
                 returnSQL = returnSQL.Substring(0, returnSQL.Length - 3);
             }
             returnSQL += (string.Format(");", TableName));
@@ -246,9 +241,9 @@ namespace ArachnidCreations.SqliteDAL
                         }
                         catch (Exception err)
                         {
-                            
+
                             // This property is not serializable into sql
-                            DAL.Log.Add(string.Format("Cannot serialize property {0} - {1}",prop, err.Message));
+                            DAL.Log.Add(string.Format("Cannot serialize property {0} - {1}", prop, err.Message));
                             sql.Append(string.Format("'{0}'", ""));
                         }
 

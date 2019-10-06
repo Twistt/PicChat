@@ -10,9 +10,7 @@ namespace ArachnidCreations.SqliteDAL
 {
     public class ORM
     {
-        public static DAL dal = null;
-
-        private static Dictionary<string, DataTable> TableStructures = new Dictionary<string, DataTable>();
+          private static Dictionary<string, DataTable> TableStructures = new Dictionary<string, DataTable>();
         /// <summary>
         /// Generates an insert statement based off table structure information and an object of your choosing (any object)
         /// this will ignore any properties on your object that do not match a table name.
@@ -271,8 +269,7 @@ namespace ArachnidCreations.SqliteDAL
             dt = TableStructures.Where(t => t.Key == tablename).FirstOrDefault().Value;
             if (dt == null)
             {
-                if (dal == null) dt = DAL.getTableStructure(tablename);
-                else dt = DAL.getTableStructure(tablename);
+                dt = DAL.getTableStructure(tablename);
                 if (dt != null)
                 {
                     TableStructures.Add(tablename, dt);
@@ -284,11 +281,7 @@ namespace ArachnidCreations.SqliteDAL
         {
             return GetSingle<T>(null, tablename, id.ToString(), keyname);
         }
-        public static T GetSingle<T>(DAL dal, string tablename, int id, string keyname)
-        {
-            return GetSingle<T>(dal, tablename, id.ToString(), keyname);
-        }
-        public static T GetSingle<T>(DAL dal, string tablename, string id, string keyname, string orderby = null)
+        public static T GetSingle<T>(string tablename, string id, string keyname, string orderby = null)
         {
             var sql = string.Format("select * from {0} where {2} = '{1}' {3} limit 1", tablename, id, keyname, orderby);
             DataTable dt = null;
@@ -333,7 +326,7 @@ namespace ArachnidCreations.SqliteDAL
                     }
                     if (prop.PropertyType.ToString().ToLower().Contains("datetime"))
                     {
-                        DateTime now = DateTime.Now;
+                        DateTime now = DateTime.UtcNow;
 
                         if (ColumnNames.Where(s => s.ToLower() == prop.Name.ToLower()).FirstOrDefault() != null)
                         {
@@ -495,7 +488,7 @@ namespace ArachnidCreations.SqliteDAL
                     }
                     if (prop.PropertyType.ToString().ToLower().Contains("datetime"))
                     {
-                        DateTime now = DateTime.Now;
+                        DateTime now = DateTime.UtcNow;
 
                         if (ColumnNames.Where(s => s.ToLower() == prop.Name.ToLower()).FirstOrDefault() != null)
                         {
@@ -585,7 +578,7 @@ namespace ArachnidCreations.SqliteDAL
                         }
                         if (prop.PropertyType.ToString().ToLower().Contains("datetime"))
                         {
-                            DateTime now = DateTime.Now;
+                            DateTime now = DateTime.UtcNow;
 
                             if (ColumnNames.Where(s => s.ToLower() == prop.Name.ToLower()).FirstOrDefault() != null)
                             {
@@ -691,7 +684,7 @@ namespace ArachnidCreations.SqliteDAL
                         }
                         if (prop.PropertyType.ToString().ToLower().Contains("datetime"))
                         {
-                            DateTime now = DateTime.Now;
+                            DateTime now = DateTime.UtcNow;
 
                             if (ColumnNames.Where(s => s.ToLower() == prop.Name.ToLower()).FirstOrDefault() != null)
                             {
@@ -762,7 +755,7 @@ namespace ArachnidCreations.SqliteDAL
             var sql = String.Format("Select * from {0};", tablename);
             return convertDataTabletoObject<T>(DAL.Load(sql));
         }
-        public static T ObjectFromNVP<T>(string tablename, DAL dal, int id = 0, string keyname = null)
+        public static T ObjectFromNVP<T>(string tablename, int id = 0, string keyname = null)
         {
             string sql = string.Empty;
             if (keyname != null && id != 0) sql = string.Format("select top 1 * from {0} where {2} = '{1}'", tablename, id, keyname);
@@ -868,7 +861,7 @@ namespace ArachnidCreations.SqliteDAL
             }
             return sql;
         }
-        public static T GetSingle<T>(DAL dal, int id)
+        public static T GetSingle<T>(int id)
         {
             var tablename = GetTableName<T>();
 
@@ -911,7 +904,7 @@ namespace ArachnidCreations.SqliteDAL
                     }
                     if (prop.PropertyType.ToString().ToLower().Contains("datetime"))
                     {
-                        DateTime now = DateTime.Now;
+                        DateTime now = DateTime.UtcNow;
 
                         if (ColumnNames.Where(s => s.ToLower() == prop.Name.ToLower()).FirstOrDefault() != null)
                         {

@@ -31,12 +31,13 @@ namespace ParaChat.DNC
         public static void RunServer() {
             // Create a listener.
             HttpListener listener = new HttpListener();
-            var prefix = "http://127.0.0.1:3001/";
+            var prefix = "http://127.0.0.1:5001/";
 		// Add the prefixes.
             listener.Prefixes.Add(prefix);
 
             listener.Start();
             Console.WriteLine("Listening on " + prefix);
+
             // Note: The GetContext method blocks while waiting for a request. 
             while (!shouldAbort)
             {
