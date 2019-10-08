@@ -37,9 +37,9 @@ namespace ParaChat.DNC
 
             listener.Start();
             Console.WriteLine("Listening on " + prefix);
-
+ 
             // Note: The GetContext method blocks while waiting for a request. 
-            while (!shouldAbort)
+            while (!shouldAbort && listener.IsListening)
             {
                 HttpListenerContext context = listener.GetContext();
                 context.Response.ContentType = "text/html";
