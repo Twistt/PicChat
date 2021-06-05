@@ -20,20 +20,26 @@ namespace ParaChat.DNC
         public string UserID;
         public ClientConnection(HttpListenerContext context, ChatUser user)
         {
-            Console.WriteLine("Accepted new client connection.");
-            User = user;
-            UserID = user.ID;
-            this.context = context;
-            timer = new Timer(TimerTick,null, 1000,5000);
-            context.Response.KeepAlive = true;
-            request = context.Request;
-            response = context.Response;
-            SendMessage(null,new ChatMessage(File.ReadAllText("Templates/ChatTemplate.html").Replace("{{UserID}}", UserID.ToString())) {isParsed=true });
-            Server.PublicChat += SendMessage;
-            
-            foreach (var message in Common.Messages.OrderByDescending(c => c.DATETIME).Take(500).Reverse().ToList())
+            try
             {
-                if (message.isPrivate && message.ToUser == User.UserName || message.FromUser == User.UserName || !message.isPrivate) SendMessage(null, message);
+                Console.WriteLine("Accepted new client connection.");
+                User = user;
+                UserID = user.ID;
+                this.context = context;
+                timer = new Timer(TimerTick, null, 1000, 5000);
+                context.Response.KeepAlive = true;
+                request = context.Request;
+                response = context.Response;
+                SendMessage(null, new ChatMessage(File.ReadAllText("Templates/ChatTemplate.html").Replace("{{UserID}}", UserID.ToString())) { isParsed = true });
+                Server.PublicChat += SendMessage;
+
+                foreach (var message in Common.Messages.OrderByDescending(c => c.DATETIME).Take(500).Reverse().ToList())
+                {
+                    if (message.isPrivate && message.ToUser == User.UserName || message.FromUser == User.UserName || !message.isPrivate) SendMessage(null, message);
+                }
+            }
+            catch (Exception) {
+                Console.WriteLine("Unable to handle user");
             }
         }
         private void TimerTick(object state)
