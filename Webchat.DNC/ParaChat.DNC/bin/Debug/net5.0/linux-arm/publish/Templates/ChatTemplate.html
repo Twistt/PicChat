@@ -1,0 +1,136 @@
+﻿<html>
+<head>
+    <title>Pictochat Chat (ParaChat)</title>
+    <style>
+        body { background-color: black; font-family: verdana; color: white; font-size: 9pt; }
+
+        h4 { font-size: 10pt; }
+
+        .window { border: 1px solid cyan; display: block; width: 100%; height: 100%; }
+
+        .windowHeader { background-color: purple; display: block; height: 20px; color: white; }
+
+            .windowHeader h4 { padding: 0px; margin: 0px; padding: 2px; }
+
+        .mainBody { padding: 5px; }
+
+        #ChatWindow { width: 87%; min-height: 79%; position: absolute; bottom: 1%; left: 1%; }
+
+            #ChatWindow .mainBody { display: flex; flex-direction: column-reverse; }
+
+        #StatsWindow { width: 10%; position: fixed; right: 1%; top: 1%; height: 15%; }
+
+        #UserWindow { width: 10%; position: fixed; right: 1%; top: 35%; height: 64%; }
+
+        #ToolsWindow { width: 10%; position: fixed; right: 1%; top: 18%; height: 15%; }
+
+        #ChatBar { width: 87%; height: 8%; position: fixed; top: 5px; left: 1%; z-index: 99; background-color: black; overflow: hidden; }
+
+        #ChatBarFrame { width: 100%; height: 100%; border: 0px; margin: 0px; background-color: black; z-index: 99; }
+
+        #UserList { color: white; white-space: pre-wrap; }
+
+        #UserWindow .mainBody { color: white; overflow-y: auto; height: 100%; }
+
+            #UserWindow .mainBody form { float: left; padding: 5px; }
+
+        .wrapperWindow { height: 90%; }
+
+        .message { width: 99.7%; text-align: left; border-bottom: 1px solid #333333; background-color: black; margin-top: 1px; padding: 0px; margin-right: 3px; color: white; }
+
+        .systemMessage { width: 94%; text-align: left; border: 1px solid #333333; border-radius: 7px; border-color: purple; background-color: #111111; margin-top: 3px; padding: 2px; margin-left: 2.5%; }
+
+        .linklist a { color: cyan; }
+
+        .PictochatPink { color: pink; }
+
+        .libraryBlue { width: 94%; text-align: left; border: 1px solid lightblue; border-radius: 7px; border-color: lightblue; background-color: #111111; margin-top: 3px; padding: 2px; margin-left: 2.5%; }
+
+        .privateMessage { color: gold; font-weight: bold; }
+
+        #ChatWindow .mainBody { padding: 0px; }
+    </style>
+</head>
+<body>
+    <div class="wrapperWindow" id="StatsWindow">
+        <div class="window">
+            <div class="windowHeader">
+                <h4>Stats</h4>
+            </div>
+            <div class="mainBody">
+                <span id="Users">Users: </span><br />
+                <span id="Messages">Messages: </span><br />
+                <span id="Library">Library: </span><br />
+                <span id="Online">Users Online: </span><br />
+                <span id="MyShares">My Shares: </span><br />
+            </div>
+        </div>
+    </div>
+    <div class="wrapperWindow" id="UserWindow">
+        <div class="window">
+            <div class="windowHeader">
+                <h4>Users</h4>
+            </div>
+            <div class="mainBody">
+                <h4>Basic Commands</h4>
+                <!--Help-->
+                <form target="ChatBar" method="POST" action="/send">
+                    <button type="submit" name="message" value="/help">/help</button>
+                    <input type="hidden" name="UserID" value="{{UserID}}" />
+                </form>
+                <form target="ChatBar" method="POST" action="/send">
+                    <button type="submit" name="message" value="/list">/list</button>
+                    <input type="hidden" name="UserID" value="{{UserID}}" />
+                </form>
+                <h4>Chat Commands</h4>
+                <div>/pm user message</div>
+                <div>/block user</div>
+                <h4>Library Commands</h4>
+                <div>/search toys</div>
+            </div>
+        </div>
+    </div>
+    <div class="wrapperWindow" id="ToolsWindow">
+        <div class="window">
+            <div class="windowHeader">
+                <h4>Tools</h4>
+            </div>
+            <div class="mainBody">
+                <center>
+                    <span>Double Points for Pictochat Uploads</span>
+                    <a href="http://Pictochat3nflqz3y.onion/Upload" target="_blank">
+                        <input type="button" value="Upload Files" />
+                    </a>
+                </center>
+            </div>
+        </div>
+    </div>
+    <div class="wrapperWindow" id="ChatBar">
+        <div class="window">
+            <div class="windowHeader">
+                <h4>Send Chat</h4>
+            </div>
+            <div class="mainBody" style="overflow-y:hidden;">
+                <iframe id="ChatBarFrame" name="ChatBar" srcdoc='
+					<body style="margin:0px; padding:0px; overflow:hidden;">
+					<link rel="/bootstrap.min.css"></link>
+					<link rel="/bootstrap-theme.min.css"></link>
+					<div style="border:1px solid cyan; width:100%; height:100%; display:block; background-color:#111111;">
+						<form method="post" action="/send">
+
+							<input type="text" class="form-control" style="width:87%;" name="message" id="message" autofocus/>
+							<input type="submit" class="btn btn-default" value="Send" style="width:9%;" />
+							<input type="hidden" name="UserID" value="{{UserID}}">
+						</form>
+					</div>
+				    </body>
+				'></iframe>
+            </div>
+        </div>
+    </div>
+    <div class="wrapperWindow" id="ChatWindow">
+        <div class="window" style="overflow-y:scroll">
+            <div class="windowHeader">
+                <h4>Pictochat Chat - New Version Out.</h4>
+            </div>
+            <div class="mainBody">

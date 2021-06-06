@@ -1,0 +1,9 @@
+﻿<body style="margin:0px; padding:0px; overflow:hidden;">
+    <div style="border:1px solid cyan; width:100%; height:100%; display:block; background-color:transparent;">
+        <form method="post" action="/send" target="ChatBar">
+            <input type="submit" class="btn btn-default" value="Send" style="width:9%; float:right; margin:5px;" />
+            <input type="text" class="form-control" style="width:87%; float:left; margin:5px;" name="message" id="message" autofocus>
+            <input type="hidden" name="UserID" value="{{UserID}}">
+        </form>
+    </div>
+</body>
